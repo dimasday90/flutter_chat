@@ -1,7 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 //* utils
 import '../../utils/constants.dart';
+
+//* widgets
+import '../pickers/user_image_picker.dart';
 
 class AuthForm extends StatefulWidget {
   AuthForm(this.submitHandler, this.isLoading);
@@ -11,6 +15,7 @@ class AuthForm extends StatefulWidget {
     String email,
     String password,
     String username,
+    File image,
     AuthStatus status,
   ) submitHandler;
   final bool isLoading;
@@ -25,10 +30,20 @@ class _AuthFormState extends State<AuthForm> {
   var _userEmail = "";
   var _userName = "";
   var _userPassword = "";
+  File _pickedImage;
+
+  void _pickImage(File image) {
+    _pickedImage = image;
+  }
 
   void _submit() {
     final isValid = _formKey.currentState.validate();
     FocusScope.of(context).unfocus();
+
+    if (_pickedImage == null && _status == AuthStatus.signup) {
+      return;
+    }
+
     if (isValid) {
       _formKey.currentState.save();
       widget.submitHandler(
@@ -36,6 +51,7 @@ class _AuthFormState extends State<AuthForm> {
         _userEmail.trim(),
         _userName.trim(),
         _userPassword.trim(),
+        _pickedImage,
         _status,
       );
     }
@@ -55,6 +71,10 @@ class _AuthFormState extends State<AuthForm> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  if (_status == AuthStatus.signup)
+                    UserImagePicker(
+                      imagePickerHandler: _pickImage,
+                    ),
                   TextFormField(
                     key: ValueKey('email'),
                     validator: (value) {
