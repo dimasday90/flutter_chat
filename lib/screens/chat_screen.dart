@@ -1,8 +1,62 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
-class ChatScreen extends StatelessWidget {
+//* widgets
+import '../widgets/chat/messages.dart';
+import '../widgets/chat/new_message.dart';
+
+class ChatScreen extends StatefulWidget {
+  @override
+  _ChatScreenState createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  @override
+  void initState() {
+    final fbm = FirebaseMessaging();
+
+    //* for iOS
+    fbm.requestNotificationPermissions();
+    //*
+
+    fbm.configure(
+      onMessage: (msg) {
+        if (Platform.isAndroid) {
+          print(msg['notification']);
+          print(msg['data']);
+        }
+        if (Platform.isIOS) {
+          print(msg['aps']['alert']);
+        }
+        return;
+      },
+      onLaunch: (msg) {
+        if (Platform.isAndroid) {
+          print(msg['notification']);
+          print(msg['data']);
+        }
+        if (Platform.isIOS) {
+          print(msg['aps']['alert']);
+        }
+        return;
+      },
+      onResume: (msg) {
+        if (Platform.isAndroid) {
+          print(msg['notification']);
+          print(msg['data']);
+        }
+        if (Platform.isIOS) {
+          print(msg['aps']['alert']);
+        }
+        return;
+      },
+    );
+    fbm.subscribeToTopic('chat');
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,32 +90,38 @@ class ChatScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: StreamBuilder(
-        stream: Firestore.instance
-            .collection('/chats/Ddid3Ihbqd0qxixMTLwB/messages')
-            .snapshots(),
-        builder: (ctx, streamSnapshot) {
-          if (streamSnapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          final documents = streamSnapshot.data.documents;
-          return ListView.builder(
-            itemCount: documents.length,
-            itemBuilder: (context, index) => Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                documents[index]['text'],
-              ),
+      body: Container(
+        child: Column(
+          children: [
+            Expanded(
+              child: Messages(),
             ),
-          );
-        },
+            NewMessage(),
+          ],
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {},
-      ),
+      // body: StreamBuilder(
+      //   stream: Firestore.instance
+      //       .collection('/chats/Ddid3Ihbqd0qxixMTLwB/messages')
+      //       .snapshots(),
+      //   builder: (ctx, streamSnapshot) {
+      //     if (streamSnapshot.connectionState == ConnectionState.waiting) {
+      //       return Center(
+      //         child: CircularProgressIndicator(),
+      //       );
+      //     }
+      //     final documents = streamSnapshot.data.documents;
+      //     return ListView.builder(
+      //       itemCount: documents.length,
+      //       itemBuilder: (context, index) => Padding(
+      //         padding: const EdgeInsets.all(8.0),
+      //         child: Text(
+      //           documents[index]['text'],
+      //         ),
+      //       ),
+      //     );
+      //   },
+      // ),
     );
   }
 }
