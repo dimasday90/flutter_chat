@@ -28,22 +28,24 @@ class _UserImagePickerState extends State<UserImagePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 50,
-          backgroundImage: _pickedImage != null
-              ? FileImage(
-                  _pickedImage,
-                )
-              : null,
-        ),
-        FlatButton.icon(
-          onPressed: _pickImage,
-          icon: Icon(Icons.image_aspect_ratio_rounded),
-          label: Text('Add Image'),
-        ),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 50,
+            backgroundImage: _pickedImage != null
+                ? FileImage(
+                    _pickedImage,
+                  )
+                : null,
+          ),
+          FlatButton.icon(
+            onPressed: _pickImage,
+            icon: Icon(Icons.image),
+            label: Text('Add Image'),
+          ),
+        ],
+      ),
     );
   }
 }
