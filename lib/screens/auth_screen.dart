@@ -32,7 +32,7 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() {
         _isLoading = true;
       });
-      AuthResult authResult;
+      UserCredential authResult;
       if (status == AuthStatus.login) {
         authResult = await _auth.signInWithEmailAndPassword(
           email: email,
@@ -44,19 +44,19 @@ class _AuthScreenState extends State<AuthScreen> {
           password: password,
         );
 
-        final StorageReference ref = FirebaseStorage.instance
+        final Reference ref = FirebaseStorage.instance
             .ref()
             .child('user_image')
             .child(authResult.user.uid + '.jpg');
 
-        await ref.putFile(image).onComplete;
+        await ref.putFile(image);
 
         final imageUrl = await ref.getDownloadURL();
 
-        await Firestore.instance
+        await FirebaseFirestore.instance
             .collection('users')
-            .document(authResult.user.uid)
-            .setData({
+            .doc(authResult.user.uid)
+            .set({
           "email": email,
           "username": username,
           "imageUrl": imageUrl,

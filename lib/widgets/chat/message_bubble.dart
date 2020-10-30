@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MessageBubble extends StatelessWidget {
   final String message;
@@ -20,6 +19,7 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Row(
       mainAxisAlignment:
           isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -44,7 +44,10 @@ class MessageBubble extends StatelessWidget {
                   isCurrentUser ? Radius.circular(0) : Radius.circular(12),
             ),
           ),
-          width: 140,
+          constraints: BoxConstraints(
+            minWidth: size.width * 0.2,
+            maxWidth: size.width * 0.5,
+          ),
           padding: EdgeInsets.symmetric(
             vertical: 10,
             horizontal: 16,
@@ -63,7 +66,7 @@ class MessageBubble extends StatelessWidget {
                 style: TextStyle(
                   color: isCurrentUser
                       ? Colors.black
-                      : Theme.of(context).accentTextTheme.headline1.color,
+                      : Theme.of(context).accentTextTheme.headline6.color,
                   fontWeight: FontWeight.bold,
                 ),
                 overflow: TextOverflow.fade,
@@ -74,10 +77,11 @@ class MessageBubble extends StatelessWidget {
                 style: TextStyle(
                   color: isCurrentUser
                       ? Colors.black
-                      : Theme.of(context).accentTextTheme.headline1.color,
+                      : Theme.of(context).accentTextTheme.headline6.color,
                 ),
                 overflow: TextOverflow.fade,
                 softWrap: true,
+                textAlign: isCurrentUser ? TextAlign.end : TextAlign.start,
               ),
             ],
           ),
